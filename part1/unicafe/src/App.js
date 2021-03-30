@@ -11,6 +11,8 @@ const Display = props => {
 
 const Statistics = ({good, neutral, bad}) => {
   let total = good + neutral + bad
+  if(total===0) return <div>No feedback given</div>
+  
   return (
     <div>
       <Display value={good} text="good" />
