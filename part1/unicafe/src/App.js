@@ -5,22 +5,22 @@ const Button = props => {
   return <button onClick={props.handleClick}>{props.text}</button>
 }
 
-const Display = props => {
+const Statitic = props => {
   return <p>{props.text} {props.value}</p>
 }
 
 const Statistics = ({good, neutral, bad}) => {
   let total = good + neutral + bad
   if(total===0) return <div>No feedback given</div>
-  
+
   return (
     <div>
-      <Display value={good} text="good" />
-      <Display value={neutral} text="neutral" />
-      <Display value={bad} text="bad" />
-      <Display value={total} text="total" />
-      <Display value={(good * 1 + neutral * 0 + bad * -1) / total} text="average" />
-      <Display value={good / total + " %"} text="positive" />
+      <Statitic value={good} text="good" />
+      <Statitic value={neutral} text="neutral" />
+      <Statitic value={bad} text="bad" />
+      <Statitic value={total} text="total" />
+      <Statitic value={(good * 1 + neutral * 0 + bad * -1) / total} text="average" />
+      <Statitic value={good / total + " %"} text="positive" />
     </div>
   )
 
