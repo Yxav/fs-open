@@ -1,3 +1,4 @@
+import Content from './components/Content.js'
 
 const App = () => {
   const courses = [
@@ -45,30 +46,12 @@ const App = () => {
     }
   ]
 
-  const Course = ({ course }) => {
-
-    const Header = ({ name }) => <h2>{course.name}</h2>
-
-    const Content = ({ content }) => content.map((part,id)=> <Part key={id} name={part.name} exercises={part.exercises}/>)
-
-    const Part = ({name, exercises}) => <p>{name} {exercises}</p>
-
-    const Total = ({exercises}) =><p><b>Total of exercises {exercises.reduce((acc, current )=> acc+current.exercises, 0)}</b></p>
-
-    return (
-      <div>
-        <Header name={course.name} />
-        <Content content={course.parts} />
-        <Total exercises={course.parts}/>
-      </div>
-    )
-  }
-
   return (
     <div>
-      {courses.map(course => <Course course={course} />)}
+      {courses.map(course => <Content key={course.id} course={course} />)}
     </div>
   )
+
 }
 
 export default App
