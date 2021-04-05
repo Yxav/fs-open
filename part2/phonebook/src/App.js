@@ -1,15 +1,5 @@
 import React, { useState } from 'react'
-
-const DisplayPhonebook = ({ id, name, number }) => {
-  return (
-    <div>
-      <div className="results">
-        <p id={id}>{name} {number}</p>
-      </div>
-
-    </div>
-  )
-}
+import Persons from './components/Persons.js'
 
 
 const App = () => {
@@ -68,7 +58,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {filter === '' ? persons.map((person, id) => <DisplayPhonebook key={id} name={person.name} number={person.number} />) : filtered.map((person, id) => <DisplayPhonebook key={id} name={person.name} number={person.number} />)} 
+      <Persons filter={filter} filtered={filtered} persons={persons}/>
     </div>
   )
 }
