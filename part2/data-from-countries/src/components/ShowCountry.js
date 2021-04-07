@@ -7,7 +7,7 @@ const ShowCountry = ({country}) => {
       <p>Capital: {country.capital}</p>
       <p>Population: {country.population}</p>
 
-      <ul> Languages:
+      <ul> Spoken Languages:
         {country.languages.map(language => <li>{language.name}</li>)}
       </ul>
 
