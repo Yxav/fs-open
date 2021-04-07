@@ -19,16 +19,3 @@ const ShowCountry = ({country}) => {
 
 export default ShowCountry
 
-
-// 
-// h3 : country name  
-// 
-// p Capital name
-// p population
-// 
-// li - ul languages
-//  img flag
-// 
-// 
-// 
-// 

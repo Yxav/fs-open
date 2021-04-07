@@ -19,6 +19,7 @@ function App() {
     }), [query])
 
 
+  const handleClick = country => setQuery(country.name.toLowerCase())
 
   const handleQuery = e => {
     e.persist()
@@ -33,7 +34,7 @@ function App() {
       <div>
         Find Countries <input onChange={handleQuery} value={query}></input>
       </div>
-      <Countries countries={countries} />
+      <Countries clickEvent={handleClick} countries={countries} />
     </div>
   );
 }
