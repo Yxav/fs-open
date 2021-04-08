@@ -14,6 +14,8 @@ const App = () => {
   useEffect(() => personsServices.getData().then(res => setPersons(res)), [])
 
 
+  
+
   const handleFilter = e => {
     setfilter(e.target.value)
     const peopleFiltered = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
@@ -30,8 +32,17 @@ const App = () => {
         })
       return
     }
+  }
 
-
+  const updatePerson = ({name, number}) => {
+    const notification = window.confirm(`${name} is already added to phonebook. Replace the old number with a new one`)
+    if(notification) {
+      const person = persons.find(person => person.name === name)      
+      personsServices.updateData(person.id, {name, number})
+        .then(responsedPeople => setPersons(persons.map(people=> people.id !== person.id ? people : responsedPeople)))
+      return
+    }
+    console.log('nao trocou')
   }
 
   const handleName = e => setNewName(e.target.value)
@@ -41,11 +52,11 @@ const App = () => {
   const sendPerson = e => {
     e.preventDefault()
     const peoples = [...persons]
+    const people = { name: newName, number: newNumber }
 
     const filtered = peoples.some(people => people.name === newName)
-    if (filtered) return alert(`${newName} is already added to phonebook`)
+    if (filtered) return updatePerson(people)
 
-    const people = { name: newName, number: newNumber }
     personsServices.saveData(people)
       .then(response => setPersons(peoples.concat(response)))
 
