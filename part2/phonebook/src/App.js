@@ -31,8 +31,11 @@ const App = () => {
     const filtered = peoples.some(people => people.name === newName)
     if (filtered) return alert(`${newName} is already added to phonebook`)
 
-    peoples.push({ name: newName, number: newNumber })
-    setPersons(peoples)
+    const people =  { name: newName, number: newNumber }
+    personsServices.saveData(people)
+      .then(response => setPersons(peoples.concat(response)))
+
+    
   }
 
 
