@@ -6,5 +6,9 @@ const getData = () => axios.get(baseUrl).then(response => response.data)
 
 const saveData = (person) => axios.post(baseUrl, person).then(response => response.data)
 
+const deleteData = (id) => axios.delete(`${baseUrl}/${id}`).then(response => response.data)
 
-export default { getData, saveData }
+
+
+
+export default { getData, saveData, deleteData }

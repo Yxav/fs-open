@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import Persons from './components/Persons.js'
 
 import personsServices from './services/persons.js'
@@ -20,6 +20,20 @@ const App = () => {
     setFiltered(peopleFiltered)
   }
 
+  const handleDelete = id => {
+    const person = persons.find(person => person.id === id)
+    if(window.confirm(`Delete ${person.name}?`)) {
+      personsServices.deleteData(person.id)
+        .then(() => {
+          const updateList = persons.filter(person => person.id !== id)
+          setPersons(updateList)
+        })
+      return
+    }
+
+
+  }
+
   const handleName = e => setNewName(e.target.value)
 
   const handleNumber = e => setNewNumber(e.target.value)
@@ -31,11 +45,11 @@ const App = () => {
     const filtered = peoples.some(people => people.name === newName)
     if (filtered) return alert(`${newName} is already added to phonebook`)
 
-    const people =  { name: newName, number: newNumber }
+    const people = { name: newName, number: newNumber }
     personsServices.saveData(people)
       .then(response => setPersons(peoples.concat(response)))
 
-    
+
   }
 
 
@@ -60,7 +74,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      <Persons filter={filter} filtered={filtered} persons={persons}/>
+      <Persons filter={filter} filtered={filtered} persons={persons} handleDelete={handleDelete} />
     </div>
   )
 }
