@@ -1,5 +1,9 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
+
+const PORT = process.env.PORT || 3001
+
 const app = express()
 
 
@@ -30,9 +34,10 @@ const generateId = () => Math.floor(Math.random() * 12458754)
 
 const data = new Date()
 
-
+app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
+app.use(express.static('build'))
 
 app.get('/api/persons', (req, res) => {
   res.json(peoples)
@@ -75,6 +80,6 @@ app.get('/info', (req, res) => {
 })
 
 
-app.listen(3001, () => {
+app.listen(PORT, () => {
   console.log('ta rodando')
 })
