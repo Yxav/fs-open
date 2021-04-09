@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 
@@ -29,7 +30,9 @@ const generateId = () => Math.floor(Math.random() * 12458754)
 
 const data = new Date()
 
+
 app.use(express.json())
+app.use(morgan('tiny'))
 
 app.get('/api/persons', (req, res) => {
   res.json(peoples)
@@ -43,6 +46,15 @@ app.get('/api/persons/:id', (req, res) => {
 })
 app.post('/api/persons', (req, res) => {
   const { name, number } = req.body
+
+  if(!name || !number) return res.status(400).send({msg: 'The name or number is missing '})
+
+  const filterPeople = peoples.filter(people => people.name === name) 
+
+  if(filterPeople.length > 0) return res.status(400).send({msg: 'The name already exists in the phonebook '})
+
+  
+ 
   const people = {
     id: generateId(),
     name, 
