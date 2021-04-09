@@ -2,38 +2,53 @@ const express = require('express')
 const app = express()
 
 
-const peoples = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122",
-    }
-  ]
+let peoples = [
+  {
+    "id": 1,
+    "name": "Arto Hellas",
+    "number": "040-123456"
+  },
+  {
+    "id": 2,
+    "name": "Ada Lovelace",
+    "number": "39-44-5323523"
+  },
+  {
+    "id": 3,
+    "name": "Dan Abramov",
+    "number": "12-43-234345"
+  },
+  {
+    "id": 4,
+    "name": "Mary Poppendieck",
+    "number": "39-23-6423122",
+  }
+]
 
-  const data = new Date()
+const data = new Date()
 
-app.get('/api/persons', (req, res)=>{
+app.get('/api/persons', (req, res) => {
   res.json(peoples)
 })
 
-app.get('/info', (req,res)=>{
+app.get('/api/persons/:id', (req, res) => {
+  const { id } = req.params
+  const people = peoples.find(people => people.id === parseInt(id))
+  if (people) return res.json(people)
+  res.json({ msg: 'Does not have persons with id'})
+})
+
+app.delete('/api/persons/:id', (req, res) => {
+  const { id } = req.params
+  peoples = peoples.filter(people => people.id !== parseInt(id))
+  res.json({ msg: 'Deleted'})
+})
+
+app.get('/info', (req, res) => {
   res.send(`Phonebook has info for ${peoples.length} peoples. <br/> <br/> ${data}`)
 })
+
+
 
 app.listen(3001, () => {
   console.log('ta rodando')
