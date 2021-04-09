@@ -25,7 +25,11 @@ let peoples = [
   }
 ]
 
+const generateId = () => Math.floor(Math.random() * 12458754)
+
 const data = new Date()
+
+app.use(express.json())
 
 app.get('/api/persons', (req, res) => {
   res.json(peoples)
@@ -35,19 +39,28 @@ app.get('/api/persons/:id', (req, res) => {
   const { id } = req.params
   const people = peoples.find(people => people.id === parseInt(id))
   if (people) return res.json(people)
-  res.json({ msg: 'Does not have persons with id'})
+  res.json({ msg: 'Does not have persons with id' })
+})
+app.post('/api/persons', (req, res) => {
+  const { name, number } = req.body
+  const people = {
+    id: generateId(),
+    name, 
+    number
+  }
+  peoples.push(people)
+  res.send(people)
 })
 
 app.delete('/api/persons/:id', (req, res) => {
   const { id } = req.params
   peoples = peoples.filter(people => people.id !== parseInt(id))
-  res.json({ msg: 'Deleted'})
+  res.json({ msg: 'Deleted' })
 })
 
 app.get('/info', (req, res) => {
   res.send(`Phonebook has info for ${peoples.length} peoples. <br/> <br/> ${data}`)
 })
-
 
 
 app.listen(3001, () => {
