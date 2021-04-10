@@ -18,18 +18,24 @@ app.use(express.json())
 app.use(morgan('tiny'))
 app.use(express.static('build'))
 
-app.get('/api/persons', async (req, res) => {
-  const persons = await People.find()
-  res.json(persons)
+app.get('/api/persons', async (req, res, next) => {
+  await People.find()
+    .then(people=>{
+      res.json(people)
+    })
+    .catch(error=>next(error))
 })
 
-app.get('/api/persons/:id', async (req, res) => {
+app.get('/api/persons/:id', async (req, res, next) => {
   const { id } = req.params
-  const person = await People.findById({ _id: id })
-  res.json(person)
+  await People.findById({ _id: id })
+    .then(response => {
+        res.json(response)
+    })
+    .catch(error=>next(error))
 })
 
-app.put('/api/persons/:id', async (req, res) => {
+app.put('/api/persons/:id', async (req, res, next) => {
   const { id } = req.params
   const { name, number } = req.body
 
@@ -42,10 +48,11 @@ app.put('/api/persons/:id', async (req, res) => {
     .then((response) => {
       res.json(people)
     })
+    .catch(error=>next(error))
 })
 
 
-app.post('/api/persons', async (req, res) => {
+app.post('/api/persons', async (req, res, next) => {
   const { name, number } = req.body
 
   if (!name || !number) return res.status(400).send({ msg: 'The name or number is missing ' })
@@ -63,6 +70,7 @@ app.post('/api/persons', async (req, res) => {
   })
   await people.save()
     .then(response => res.json(response))
+    .catch(error=>next(error))
 
 
 })
@@ -70,7 +78,9 @@ app.post('/api/persons', async (req, res) => {
 app.delete('/api/persons/:id', async (req, res) => {
   const { id } = req.params
   await People.findByIdAndDelete({ _id: id })
-  res.json({ msg: 'Deleted' })
+  .then(response => res.json({ msg: `${response.name} Deleted` }))
+  .catch(error=>next(error))
+  
 })
 
 app.get('/info', (req, res) => {
