@@ -55,12 +55,12 @@ app.put('/api/persons/:id', async (req, res, next) => {
 app.post('/api/persons', async (req, res, next) => {
   const { name, number } = req.body
 
-  if (!name || !number) return res.status(400).send({ msg: 'The name or number is missing ' })
+  // if (!name || !number) return res.status(400).send({ msg: 'The name or number is missing ' })
 
   const persons = await People.find()
-  const filterPeople = persons.filter(person => person.name === name)
+  // const filterPeople = persons.filter(person => person.name === name)
 
-  if (filterPeople.length > 0) return res.status(400).send({ msg: 'The name already exists in the phonebook ' })
+  // if (filterPeople.length > 0) return res.status(400).send({ msg: 'The name already exists in the phonebook ' })
 
 
   const people = new People({
@@ -70,7 +70,7 @@ app.post('/api/persons', async (req, res, next) => {
   })
   await people.save()
     .then(response => res.json(response))
-    .catch(error=>next(error))
+    .catch(error=>res.json(error))
 
 
 })
