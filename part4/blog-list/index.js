@@ -1,32 +1,17 @@
-require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const config = require('./config')
 
-const Blog = require('./models/blog.js')
+const blogController = require('./controllers/blogs')
 
 app.use(cors())
 app.use(express.json())
 
-app.get('/api/blogs', (request, response) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs)
-    })
-})
+app.get('/api/blogs', blogController.index)
 
-app.post('/api/blogs', (request, response) => {
-  const blog = new Blog(request.body)
+app.post('/api/blogs', blogController.store)
 
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result)
-    })
-})
-
-const PORT = process.env.PORT || 3003
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+app.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`)
 })
