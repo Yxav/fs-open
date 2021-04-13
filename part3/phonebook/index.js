@@ -2,40 +2,38 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const app = express()
 
 const People = require('./models/person')
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 3001
-
-const app = express()
-
-const generateId = () => Math.floor(Math.random() * 12458754)
-
-const data = new Date()
 
 app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
+
 app.use(express.static('build'))
 
-app.get('/api/persons', async (req, res, next) => {
-  await People.find()
-    .then(people=>{
+
+app.get('/api/persons', (req, res, next) => {
+  People.find()
+    .then(people => {
       res.json(people)
     })
-    .catch(error=>next(error))
+    .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', async (req, res, next) => {
+app.get('/api/persons/:id', (req, res, next) => {
   const { id } = req.params
-  await People.findById({ _id: id })
+  People.findById({ _id: id })
     .then(response => {
-        res.json(response)
+      res.json(response)
     })
-    .catch(error=>next(error))
+    .catch(error => next(error))
 })
 
-app.put('/api/persons/:id', async (req, res, next) => {
+app.put('/api/persons/:id', (req, res, next) => {
   const { id } = req.params
   const { name, number } = req.body
 
@@ -44,48 +42,61 @@ app.put('/api/persons/:id', async (req, res, next) => {
     number
   }
 
-  await People.findByIdAndUpdate({_id: id}, people)
-    .then((response) => {
+  People.findByIdAndUpdate({ _id: id }, people)
+    .then(() => {
       res.json(people)
     })
-    .catch(error=>next(error))
+    .catch(error => next(error))
 })
 
 
-app.post('/api/persons', async (req, res, next) => {
+app.post('/api/persons', (req, res, next) => {
   const { name, number } = req.body
 
-  // if (!name || !number) return res.status(400).send({ msg: 'The name or number is missing ' })
-
-  const persons = await People.find()
-  // const filterPeople = persons.filter(person => person.name === name)
-
-  // if (filterPeople.length > 0) return res.status(400).send({ msg: 'The name already exists in the phonebook ' })
-
+  if (!name || !number) return res.status(400).send({ msg: 'The name or number is missing ' })
 
   const people = new People({
-    id: generateId(),
     name,
     number
   })
-  await people.save()
-    .then(response => res.json(response))
-    .catch(error=>res.json(error))
 
-
+  people
+    .save()
+    .then(response => res.json(response.toJSON()))
+    .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', async (req, res) => {
+app.delete('/api/persons/:id', async (req, res, next) => {
   const { id } = req.params
   await People.findByIdAndDelete({ _id: id })
-  .then(response => res.json({ msg: `${response.name} Deleted` }))
-  .catch(error=>next(error))
-  
+    .then(response => res.json({ msg: `${response.name} Deleted` }))
+    .catch(error => next(error))
+
 })
 
 app.get('/info', (req, res) => {
-  res.send(`Phonebook has info for ${peoples.length} peoples. <br/> <br/> ${data}`)
+  People.find({})
+    .then(peoples => {
+      res.send(
+        `<div>
+        <span>Phonebook has info for ${peoples.length} peoples. <br/> <br/><span/><div/> <span>${new Date()}<span/>`)
+
+    })
 })
+
+const errorHandler = (error, request, res, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return res.status(400).send({ error: error.message })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 
 app.listen(PORT, () => {
