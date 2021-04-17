@@ -11,5 +11,7 @@ app.get('/api/blogs', blogController.index)
 
 app.post('/api/blogs', blogController.store)
 
+app.delete('/api/blogs/:id', blogController.destroy)
+
 
 module.exports = app
