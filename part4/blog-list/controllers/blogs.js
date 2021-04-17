@@ -16,8 +16,8 @@ const store = (request, response) => {
   if (!title || !url) return response.status(400).json({ error: 'invalid info' })
 
   const blog = new Blog({
-    author,
     title,
+    author,
     url,
     likes
   })
@@ -28,8 +28,30 @@ const store = (request, response) => {
     })
 }
 
+const update = async (request, response) => {
+  const { id } = request.params
+  let { likes } = request.body
+
+  if (!id) return response.status(400).json({ error: 'Missing id' })
+  if (!likes) likes = 0
+
+
+  const blog = {
+    likes
+  }
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(id, blog, { new: true })
+    updatedBlog ? response.status(200).json(updatedBlog.toJSON()) : response.status(400).end()
+
+  } catch (error) {
+    return response.status(400).json({ error })
+  }
+
+}
 const destroy = async (request, response) => {
   const { id } = request.params
+  if (!id) return response.status(400).json({ error: 'Missing id' })
   try {
     await Blog.findByIdAndDelete({ _id: id })
     return response.status(204).end()
@@ -41,5 +63,6 @@ const destroy = async (request, response) => {
 module.exports = {
   index,
   store,
+  update,
   destroy
 }

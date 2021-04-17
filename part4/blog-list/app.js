@@ -11,6 +11,8 @@ app.get('/api/blogs', blogController.index)
 
 app.post('/api/blogs', blogController.store)
 
+app.put('/api/blogs/:id', blogController.update)
+
 app.delete('/api/blogs/:id', blogController.destroy)
 
 

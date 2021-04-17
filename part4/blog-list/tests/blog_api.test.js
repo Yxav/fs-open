@@ -97,7 +97,6 @@ describe('When create a blog post', () => {
 describe('When delete a blog post', () => {
 
   test('A blog post can be deleted ', async () => {
-
     const blogsAtStart = await helper.BlogsInDb()
     
     await api
@@ -107,39 +106,73 @@ describe('When delete a blog post', () => {
     const blogsAtEnd = await helper.BlogsInDb()
 
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+  })
+  
+  test('Should return an error if missing id ', async () => {
+    await api
+    .delete(`/api/blogs/`)
+    .expect(404)
+    
+    const blogsAtEnd = await helper.BlogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+  test('Should return an error if blog no exists', async () => {
+    await api
+    .delete(`/api/blogs/54578518584`)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+    
+    const blogsAtEnd = await helper.BlogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+})
+
+describe('When update a blog post', () => {
+
+  test('A blog post can be updated ', async () => {
+    const blogsAtStart = await helper.BlogsInDb()
+
+    const postBlog = {
+      likes: 100,
+    }
+    
+    await api
+    .put(`/api/blogs/${blogsAtStart[0].id}`)
+    .send(postBlog)
+    .expect(200)
+    
+    const blogsAtEnd = await helper.BlogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+    const postContent = blogsAtEnd.map(post => post.likes)
+
+    expect(postContent).toContain(100)
 
   })
+  
+  test('Should return an error if missing id ', async () => {
+    await api
+    .put(`/api/blogs/`)
+    .expect(404)
+    
+    const blogsAtEnd = await helper.BlogsInDb()
 
-  // test('When no likes property ', async () => {
-  //   const postBlog = {
-  //     title: 'IA is dummy?',
-  //     author: 'Morgan Freeman',
-  //     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-  //   }
-  //   await api
-  //     .post('/api/blogs')
-  //     .send(postBlog)
-  //     .expect(200)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
 
-  //   const blogsAtEnd = await helper.BlogsInDb()
+  test('Should return an error if blog no exists', async () => {
+    await api
+    .put(`/api/blogs/54578518584`)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+    
+    const blogsAtEnd = await helper.BlogsInDb()
 
-  //   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-  // })
-
-  // test('When no title and url properties ', async () => {
-  //   const postBlog = {
-  //     author: 'Morgan Freeman',
-  //     likes: 15
-  //   }
-  //   await api
-  //     .post('/api/blogs')
-  //     .send(postBlog)
-  //     .expect(400)
-
-  //   const blogsAtEnd = await helper.BlogsInDb()
-
-  //   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-  // })
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
 })
 
 
