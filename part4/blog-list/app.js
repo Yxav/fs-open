@@ -1,19 +1,25 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-
+require('express-async-errors')
 const blogController = require('./controllers/blogs')
+const usersRouter = require('./controllers/usersRouter')
+const loginRouter = require('./controllers/login')
+
+const middleware = require('./utils/middlewares')
 
 app.use(cors())
 app.use(express.json())
 
-app.get('/api/blogs', blogController.index)
+app.use(middleware.getTokenFrom)
 
-app.post('/api/blogs', blogController.store)
+app.use('/api/login', loginRouter)
 
-app.put('/api/blogs/:id', blogController.update)
+app.use('/api/users', usersRouter)
 
-app.delete('/api/blogs/:id', blogController.destroy)
+app.use('/api/blogs', blogController)
 
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
 
 module.exports = app
