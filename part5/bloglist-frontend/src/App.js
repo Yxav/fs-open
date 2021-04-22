@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import './index.css'
 import BlogForm from './components/BlogForm'
+import BlogList from './components/BlogList'
+import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState(null)
+
 
 
 
@@ -26,7 +31,10 @@ const App = () => {
     }
   }, [])
 
-
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
+  }
 
   const handleLogin = async (username, password) => {
     try {
@@ -34,10 +42,17 @@ const App = () => {
       setUser(user)
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
     } catch (error) {
-      console.log(error)
+      setNotification({
+        error: `Wrong username or password`,
+        type: 'error'
+      })
+  
+      setTimeout(() => {
+        setNotification(null)
+      }, 4000)
     }
 
   }
@@ -45,25 +60,46 @@ const App = () => {
   const handleBlogCreate = async (title, url, author) => {
     try {
       const blog = await blogService.create({ title, url, author }, user)
-      setBlogs(blogs.concat(blog))
+        setNotification({
+          success: `a new blog ${blog.title} by ${blog.author} added`,
+          type: 'success'
+        })
+  
+        setTimeout(() => {
+          setNotification(null)
+        }, 4000)
+        setBlogs(blogs.concat(blog))
 
     } catch (error) {
-      console.log(error)
+      setNotification({
+        error: `Something went wrong`,
+        type: 'error'
+      })
+  
+      setTimeout(() => {
+        setNotification(null)
+      }, 4000)
     }
 
   }
 
   return (
     <div>
-      <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+          <Notification message={notification?.success || notification?.error} type={notification ? notification.type : 'null'} />
+
       {user === null && <LoginForm handleLogin={handleLogin} />}
-      {user !== null && <BlogForm handleBlogCreate={handleBlogCreate} />}
+      {
+        user !== null && <>
+          <h2>blogs</h2>
+          {/* <Notification message={notification?.success || notification?.error} type={notification ? notification.type : 'null'} /> */}
 
+          <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
 
-
+          <BlogForm handleBlogCreate={handleBlogCreate} />
+          <br/>
+          <BlogList user={user} blogs={blogs} />
+        </>
+      }
     </div>
   )
 }

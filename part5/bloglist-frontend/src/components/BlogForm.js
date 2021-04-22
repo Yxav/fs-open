@@ -15,6 +15,7 @@ const BlogForm = ({ handleBlogCreate }) => {
 
   return (
     <div>
+      <h2>Create new </h2>
       <form onSubmit={handleBlog} method="post">
         Title<input value={title} onChange={({ target }) => setTitle(target.value)} type="text" name="title" />
         Url<input value={url} onChange={({ target }) => setUrl(target.value)} type="text" name="url" />
