@@ -91,7 +91,6 @@ const App = () => {
       {
         user !== null && <>
           <h2>blogs</h2>
-          {/* <Notification message={notification?.success || notification?.error} type={notification ? notification.type : 'null'} /> */}
 
           <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
 

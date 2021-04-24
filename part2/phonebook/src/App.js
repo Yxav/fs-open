@@ -15,7 +15,10 @@ const App = () => {
   const [notification, setNotification] = useState(null)
 
 
-  useEffect(() => personsServices.getData().then(res => setPersons(res)), [])
+  useEffect(() => personsServices.getData()
+    .then(res => setPersons(res))
+    .catch(error => console.log(error))
+    , [])
 
 
   const handleFilter = e => {
@@ -73,10 +76,8 @@ const App = () => {
           }, 4000)
         })
 
-
       return
     }
-    console.log('nao trocou')
   }
 
   const handleName = e => setNewName(e.target.value)
@@ -91,18 +92,33 @@ const App = () => {
     const filtered = peoples.some(people => people.name === newName)
     if (filtered) return updatePerson(people)
 
-    personsServices.saveData(people)
-      .then(response => setPersons(peoples.concat(response)))
+    personsServices
+      .saveData(people)
+      .then(response => {
+        setPersons(peoples.concat(response))
 
-    setNotification({
-      success: `Added ${people.name}`,
-      type: 'success'
-    })
+        setNotification({
+          success: `Added ${people.name}`,
+          type: 'success'
+        })
+    
+        setTimeout(() => {
+          setNotification(null)
+        }, 4000)
+      })
+      .catch(e => {
+        setNotification({
+          error: `${e.response.data.error}`,
+          type: 'error'
+        })
+    
+        setTimeout(() => {
+          setNotification(null)
+        }, 4000)
+      })
+      
 
-    setTimeout(() => {
-      setNotification(null)
-    }, 4000)
-
+    
 
   }
 
